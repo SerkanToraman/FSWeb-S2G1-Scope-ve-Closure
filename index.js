@@ -32,8 +32,12 @@ console.log('örnek görev:', ilkiniDon(['as','sa'],function(metin){return metin
   1. skor1 ve skor2 arasındaki fark nedir?
   
   2. Hangisi bir closure kullanmaktadır? Nasıl tarif edebilirsin? (yarınki derste öğreneceksin :) )
+  //Cevap  skor1 kodlari closure'dir. skorGuncelle fonksiyonu parent(ana fonksiyon) fonksiyon olan skorartiriciya bakip skor verisini aliyor ve işlem tamamlanıyor.
   
   3. Hangi durumda skor1 tercih edilebilir? Hangi durumda skor2 daha mantıklıdır?
+  Skor
+  Sk
+
 */
 
 // skor1 kodları
@@ -64,12 +68,10 @@ Aşağıdaki takimSkoru() fonksiyonununda aşağıdakileri yapınız:
 Not: Bu fonskiyon, aşağıdaki diğer görevler için de bir callback fonksiyonu olarak da kullanılacak
 */
 
-function takimSkoru(/*Kodunuzu buraya yazınız*/){
-    /*Kodunuzu buraya yazınız*/
+function takimSkoru(){
+  return Math.floor(Math.random()*(25-10+1))+10;
 }
-
-
-
+console.log(takimSkoru());
 
 /* Görev 3: macSonucu() 
 Aşağıdaki macSonucu() fonksiyonununda aşağıdakileri yapınız:
@@ -85,10 +87,35 @@ Aşağıdaki macSonucu() fonksiyonununda aşağıdakileri yapınız:
   "KonukTakim": 80
 }
 */ 
+// function macSonucu(callback,macaOynananCeyrekSayisi){
+//   let evSahibi = 0;
+//   let konukTakim = 0;
+// for (let i=0; i<macaOynananCeyrekSayisi+1; i++){
+//   evSahibi = evSahibi+callback;
+//   konukTakim = konukTakim+callback;
+// } 
+// return `${evSahibi},${konukTakim}`
+// }
 
-function macSonucu(/*Kodunuzu buraya yazınız*/){
-  /*Kodunuzu buraya yazınız*/
-}
+// console.log('Gorev 3',macSonucu(takimSkoru(),3));
+
+
+
+
+function macSonucu(callback,mactaOynananCeyrekSayisi){
+  let evSahibiSkor = 0;
+  let konukTakimSkor = 0;
+  const skorNesne ={};
+
+  for (let i = 0; i<mactaOynananCeyrekSayisi+1;i++){
+    evSahibiSkor = evSahibiSkor+callback();
+    konukTakimSkor = konukTakimSkor + callback();
+  }
+  skorNesne.EvSahibi = evSahibiSkor;
+  skorNesne.KonukTakim = konukTakimSkor; 
+  return skorNesne;
+} 
+console.log('Gorev 3',macSonucu(takimSkoru,4));
 
 
 
@@ -105,15 +132,20 @@ Aşağıdaki periyotSkoru() fonksiyonununda aşağıdakileri yapınız:
 {
   "EvSahibi": 18,
   "KonukTakim": 12
+  
 }
   */
 
 
-function periyotSkoru(/*Kodunuzu buraya yazınız*/) {
-  /*Kodunuzu buraya yazınız*/
-
+function periyotSkoru(callback) {
+  let evSahibiSkor = callback();
+  let konukTakimSkor = callback();
+  const skorNesne ={};
+  skorNesne.EvSahibi = evSahibiSkor;
+  skorNesne.KonukTakim = konukTakimSkor; 
+  return skorNesne;
 }
-
+console.log('Gorev 4',periyotSkoru(takimSkoru));
 
 /* Zorlayıcı Görev 5: skorTabelasi() 
 Aşağıdaki skorTabelasi() fonksiyonunu kullanarak aşağıdakileri yapınız:
@@ -145,11 +177,37 @@ MAÇ UZAR ise skorTabelasi(periyotSkoru,takimSkoru,4)
 ]
 ] */
 // NOTE: Bununla ilgili bir test yoktur. Eğer logladığınız sonuçlar yukarıdakine benziyor ise tmamlandı sayabilirsiniz.
+  
+function skorTabelasi(callbackPeriyotS,callbackTakimS,mactaOynananCeyrekSayisi) {
 
-function skorTabelasi(/*Kodunuzu buraya yazınız*/) {
-  /*Kodunuzu buraya yazınız*/
+  let periyotObject = callbackPeriyotS(callbackTakimS);
+  let evSahibiSkor = periyotObject.EvSahibi;
+  let konukTakimSkor = periyotObject.KonukTakim;
+  let tabela = [`${mactaOynananCeyrekSayisi-3}. Periyot: Ev Sahibi ${evSahibiSkor} - Konuk Takim ${konukTakimSkor}`];
+  let evSahibiIndexSkor= 0;
+  let konukTakimIndexSkor= 0;
+  
+  for (let i = mactaOynananCeyrekSayisi-2;i<mactaOynananCeyrekSayisi+1;i++){
+    evSahibiIndexSkor = callbackPeriyotS(callbackTakimS).EvSahibi;
+    konukTakimIndexSkor = callbackPeriyotS(callbackTakimS).KonukTakim;
+    tabela.push(`${i}. Periyot: Ev Sahibi ${evSahibiIndexSkor} - Konuk Takim ${konukTakimIndexSkor}`);
+    evSahibiSkor = evSahibiSkor+evSahibiIndexSkor;
+    konukTakimSkor=konukTakimSkor+konukTakimIndexSkor;
+  }
+  if(evSahibiSkor===konukTakimSkor){
+    evSahibiIndexSkor = callbackPeriyotS(callbackTakimS).EvSahibi;
+    konukTakimIndexSkor = callbackPeriyotS(callbackTakimS).KonukTakim;
+    tabela.push(`1. Uzatma: Ev Sahibi ${evSahibiIndexSkor} - Konuk Takim ${konukTakimIndexSkor}`);
+    evSahibiSkor = evSahibiSkor+evSahibiIndexSkor;
+    konukTakimSkor=konukTakimSkor+konukTakimIndexSkor;
+    tabela.push(`Maç Sonucu: Ev Sahibi ${evSahibiSkor} - Konuk Takım ${konukTakimSkor}`)
+  } else{
+    tabela.push(`Maç Sonucu: Ev Sahibi ${evSahibiSkor} - Konuk Takım ${konukTakimSkor}`)
+  }
+  return tabela;
 }
 
+console.log('Görev 5', skorTabelasi(periyotSkoru,takimSkoru,4));
 
 
 
